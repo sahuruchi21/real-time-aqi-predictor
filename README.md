@@ -71,30 +71,6 @@ streamlit run app.py
 ├── city_day.csv          # AQI dataset for scaling
 ├── requirements.txt
 └── README.md
-```
-
----
-
-## 📊 Sample Output Screenshots
-
-### 1. Dashboard Home Page
-
-![Dashboard Home](https://drive.google.com/file/d/1K_hlflGTv3CXqIAH01ZO0a29Xm8n-dKK/view?usp=drive_link)
-
----
-
-### 2. AQI Prediction Results
-
-![AQI Prediction](https://drive.google.com/file/d/1NowCI8aePlbCEL54R71poB6JivALSLea/view?usp=drive_link)
-
----
-
-### 3. Pollutant Trends Visualization
-
-![Pollutant Trends](https://drive.google.com/file/d/1NowCI8aePlbCEL54R71poB6JivALSLea/view?usp=drive_link)
-
-
----
 
 ## 📌 Future Enhancements
 - Add more features like humidity, temperature, wind
