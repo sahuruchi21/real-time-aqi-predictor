@@ -79,19 +79,19 @@ streamlit run app.py
 
 ### 1. Dashboard Home Page
 
-![Dashboard Home](images/dashboard_home.png)
+![Dashboard Home](https://drive.google.com/file/d/1K_hlflGTv3CXqIAH01ZO0a29Xm8n-dKK/view?usp=drive_link)
 
 ---
 
 ### 2. AQI Prediction Results
 
-![AQI Prediction](images/aqi_prediction.png)
+![AQI Prediction](https://drive.google.com/file/d/1NowCI8aePlbCEL54R71poB6JivALSLea/view?usp=drive_link)
 
 ---
 
 ### 3. Pollutant Trends Visualization
 
-![Pollutant Trends](images/pollutant_trends.png)
+![Pollutant Trends](https://drive.google.com/file/d/1NowCI8aePlbCEL54R71poB6JivALSLea/view?usp=drive_link)
 
 
 ---
