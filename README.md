@@ -75,9 +75,24 @@ streamlit run app.py
 
 ---
 
-## 📊 Sample Output
+## 📊 Sample Output Screenshots
 
-![screenshot](docs/screenshot.png) *(Add a screenshot)*
+### 1. Dashboard Home Page
+
+![Dashboard Home](images/dashboard_home.png)
+
+---
+
+### 2. AQI Prediction Results
+
+![AQI Prediction](images/aqi_prediction.png)
+
+---
+
+### 3. Pollutant Trends Visualization
+
+![Pollutant Trends](images/pollutant_trends.png)
+
 
 ---
 
