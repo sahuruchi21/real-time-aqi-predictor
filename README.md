@@ -1,83 +1,67 @@
 
-# 🌫️ Real-Time AQI Forecasting Web App
-
-### 🔗 [Live Demo](https://your-streamlit-cloud-link) &emsp;|&emsp; 🧠 Powered by LSTM & Streamlit
-
----
-
 ## 📌 Description
-This web application forecasts Air Quality Index (AQI) for the next 15 days for any Indian city using real-time data from the **WAQI API** and a trained **LSTM deep learning model**. It provides smart **health, agriculture, transport**, and **research** advisories based on predicted AQI levels.
+This web app forecasts the **Air Quality Index (AQI)** for the next 15 days for Indian cities using real-time data from the **WAQI API** and a pre-trained **LSTM deep learning model**.  
+It also provides smart **health, agriculture, transport**, and **research** advisories based on the predicted AQI levels.
 
 ---
 
 ## 🚀 Features
-- ✅ Real-time AQI fetching via WAQI API
-- 📈 15-day AQI Forecast using LSTM model
-- 🌡️ Health, Transport & Farming advisories
-- 🧪 Research recommendation system
-- 🖼️ Interactive charts with forecast annotation
-- 🔐 Secure token handling
-- ☁️ Deployable on Streamlit Cloud
+- ✅ Fetches **real-time AQI** via WAQI API  
+- 📈 **15-day AQI forecast** using an LSTM model  
+- 🌡️ **Health, Transport & Farming advisories** based on AQI  
+- 🧪 **Research recommendations** for data-driven insights  
+- 📊 Interactive **visualizations** (Plotly)  
+- 🔐 **Secure API token** input  
+- ☁️ **Easily deployable** on Streamlit Cloud  
 
 ---
 
 ## 🖥️ Tech Stack
-| Component     | Tool              |
-|---------------|-------------------|
-| Web Framework | `Streamlit`       |
-| ML Model      | `LSTM (Keras)`    |
-| Data Source   | `WAQI API`        |
-| Visualization | `Matplotlib`      |
-| Scaler        | `MinMaxScaler`    |
-| Language      | `Python`          |
+| Component     | Tool/Library         |
+|---------------|-----------------------|
+| Web Framework | `Streamlit`           |
+| ML Model      | `LSTM (TensorFlow/Keras)` |
+| Data Source   | `WAQI API`            |
+| Visualization | `Plotly`              |
+| Scaler        | `MinMaxScaler`        |
+| Language      | `Python`              |
 
 ---
 
 ## 🛠️ Installation
+Clone the repo and install dependencies:
 ```bash
-git clone https://github.com/yourusername/aqi-forecast-app.git
-cd aqi-forecast-app
+git clone https://github.com/sahuruchi21/real-time-aqi-predictor.git
+cd real-time-aqi-predictor
 pip install -r requirements.txt
-```
+🧠 Model Info
+Trained on Delhi AQI dataset (city_day.csv)
 
----
+Sequence length: 30 time steps
 
-## 🧠 Model Info
-- Trained on Delhi AQI data (`city_day.csv`)
-- Used LSTM with 30 time steps
-- Includes multiple LSTM layers and Dropout regularization
-- Saved as `lstm_aqi_model.h5`
+Model: Stacked LSTM layers with Dropout
 
----
+Saved model: lstm_aqi_model.h5
 
-## 🔐 WAQI API Setup
-1. Create a free token from [https://aqicn.org/data-platform/token](https://aqicn.org/data-platform/token)
-2. Add it inside the app or as an environment variable.
+🔐 WAQI API Setup
+Get a free token from https://aqicn.org/data-platform/token
 
----
+Enter the token inside the app when prompted.
 
-## ▶️ Run Locally
-```bash
+▶️ Run Locally
+bash
+Copy code
 streamlit run app.py
-```
-
----
-
-## 📦 File Structure
-```
-📁 aqi-forecast-app/
-├── app.py                # Streamlit app
+📦 File Structure
+graphql
+Copy code
+📁 real-time-aqi-predictor/
+├── app.py                # Main Streamlit app
 ├── lstm_aqi_model.h5     # Trained LSTM model
 ├── city_day.csv          # AQI dataset for scaling
-├── requirements.txt
-└── README.md
-
-## 📌 Future Enhancements
-- Add more features like humidity, temperature, wind
-- Geo-based smart notifications
-- Real-time model retraining pipeline
-
----
+├── requirements.txt      # Dependencies
+├── train_model.py        # Model training script
+└── README.md             # Project documentation
 
 ## 🤝 Acknowledgments
 - [WAQI API](https://waqi.info)
