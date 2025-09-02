@@ -1,12 +1,16 @@
-
 import streamlit as st
 import numpy as np
 import pandas as pd
 import requests
 import datetime
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import plotly.express as px
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
+from streamlit_autorefresh import st_autorefresh  
+
+# 🔁 Auto-refresh every 15 minutes
+st_autorefresh(interval=900000, key="auto_refresh")
 
 # Streamlit config
 st.set_page_config(page_title="Real-Time AQI Forecast", layout="centered")
@@ -35,63 +39,53 @@ def prepare_scaler_and_sequence(df, n_steps=30):
     last_sequence = aqi_scaled[-n_steps:].reshape(1, n_steps, 1)
     return scaler, last_sequence
 
-# Get live AQI from WAQI
+# Get live AQI + pollutants from WAQI
 def fetch_live_aqi_waqi(city, token):
     url = f"https://api.waqi.info/feed/{city}/?token={token}"
     response = requests.get(url).json()
     if response["status"] != "ok":
-        return None, "City not found or API error."
+        return None, {}, "City not found or API error."
     try:
-        return response["data"]["aqi"], None
+        aqi = response["data"]["aqi"]
+        iaqi = response["data"].get("iaqi", {})  
+        pollutants = {k: v.get("v", None) for k, v in iaqi.items()}
+        return aqi, pollutants, None
     except:
-        return None, "AQI data not available."
+        return None, {}, "AQI data not available."
 
 # AQI Category with Emoji
 def aqi_label(aqi):
-    if aqi <= 50:
-        return "😊 Good"
-    elif aqi <= 100:
-        return "🙂 Satisfactory"
-    elif aqi <= 200:
-        return "😐 Moderate"
-    elif aqi <= 300:
-        return "😷 Unhealthy"
-    elif aqi <= 400:
-        return "🤢 Very Unhealthy"
-    else:
-        return "☠️ Hazardous"
+    if aqi <= 50: return "😊 Good"
+    elif aqi <= 100: return "🙂 Satisfactory"
+    elif aqi <= 200: return "😐 Moderate"
+    elif aqi <= 300: return "😷 Unhealthy"
+    elif aqi <= 400: return "🤢 Very Unhealthy"
+    else: return "☠️ Hazardous"
 
 # Advisory Sections
 def health_advisory(aqi):
-    if aqi <= 100:
-        return "🟢 Air is acceptable. No precautions needed."
-    elif aqi <= 200:
-        return "⚠️ Sensitive groups should limit prolonged outdoor exertion."
-    elif aqi <= 300:
-        return "🚑 Avoid outdoor activity. Respiratory issues may worsen."
-    else:
-        return "🚨 Health emergency conditions. Stay indoors."
+    if aqi <= 100: return "🟢 Air is acceptable. No precautions needed."
+    elif aqi <= 200: return "⚠️ Sensitive groups should limit prolonged outdoor exertion."
+    elif aqi <= 300: return "🚑 Avoid outdoor activity. Respiratory issues may worsen."
+    else: return "🚨 Health emergency conditions. Stay indoors."
 
 def farming_advisory(aqi):
-    if aqi <= 100:
-        return "🌾 Farming activities are safe."
-    elif aqi <= 200:
-        return "📅 Reduce exposure during spraying/harvesting."
-    else:
-        return "❌ Delay outdoor agricultural tasks."
+    if aqi <= 100: return "🌾 Farming activities are safe."
+    elif aqi <= 200: return "📅 Reduce exposure during spraying/harvesting."
+    else: return "❌ Delay outdoor agricultural tasks."
 
 def transport_advisory(aqi):
-    if aqi <= 100:
-        return "🚌 Use public transport to reduce pollution."
-    elif aqi <= 200:
-        return "🚕 Consider carpooling and reduce travel time."
-    else:
-        return "⛔ Restrict vehicle movement in sensitive zones."
+    if aqi <= 100: return "🚌 Use public transport to reduce pollution."
+    elif aqi <= 200: return "🚕 Consider carpooling and reduce travel time."
+    else: return "⛔ Restrict vehicle movement in sensitive zones."
 
 def research_recommendation(aqi):
-    if aqi > 200:
-        return "🔬 Correlate with local hospital admissions for health studies."
-    return ""
+    if aqi <= 100: return "📈 Monitor trends to identify early pollution patterns."
+    elif aqi <= 150: return "🔍 Study correlation with respiratory outpatient cases."
+    elif aqi <= 200: return "🧬 Analyze pollutant composition for dominant contributors (PM, NOx, SO₂)."
+    elif aqi <= 300: return "🏥 Compare AQI with hospital admission and emergency room visits."
+    elif aqi <= 400: return "📊 Model health-economic impact from reduced outdoor workforce efficiency."
+    else: return "🚨 Urgent: Recommend emergency response policies and shelter-in-place drills."
 
 # Forecast next N days
 def forecast_aqi(model, scaler, last_seq, future_days=15):
@@ -119,17 +113,28 @@ if st.button("Fetch & Predict"):
     if not waqi_token:
         st.error("⚠️ WAQI token is required.")
     else:
-        live_aqi, error = fetch_live_aqi_waqi(city, waqi_token)
+        live_aqi, pollutants, error = fetch_live_aqi_waqi(city, waqi_token)
         if error:
             st.error(error)
         else:
-            st.success(f"✅ Live AQI in {city}: {live_aqi}")
+            st.success(f"✅ Live AQI in {city}: {live_aqi} ({aqi_label(live_aqi)})")
+
+            # --- Pollutant Breakdown ---
+            if pollutants:
+                st.subheader("🧪 Pollutant Breakdown")
+                pol_df = pd.DataFrame(list(pollutants.items()), columns=["Pollutant", "Value"])
+                fig_pol = px.bar(pol_df, x="Pollutant", y="Value", color="Value",
+                                 title=f"Pollutant Levels in {city}",
+                                 color_continuous_scale="Viridis")
+                st.plotly_chart(fig_pol, use_container_width=True)
+
+            # --- Forecast ---
             scaler, last_seq = prepare_scaler_and_sequence(df, n_steps=30)
             new_scaled = scaler.transform([[live_aqi]])
             updated_seq = np.append(last_seq[:, 1:, :], [[new_scaled[0]]], axis=1)
             forecast_df = forecast_aqi(model, scaler, updated_seq)
 
-            # Add all labels and advisories
+            # Add labels + advisories
             forecast_df["Category"] = forecast_df["Predicted_AQI"].apply(aqi_label)
             forecast_df["AQI with Label"] = forecast_df.apply(
                 lambda row: f"{row['Predicted_AQI']:.2f} {row['Category']}", axis=1
@@ -139,46 +144,42 @@ if st.button("Fetch & Predict"):
             forecast_df["Transport Advisory"] = forecast_df["Predicted_AQI"].apply(transport_advisory)
             forecast_df["Research Hint"] = forecast_df["Predicted_AQI"].apply(research_recommendation)
 
-            # Display data table
-            st.subheader("📊 Predicted AQI for Next 15 Days")
+            # --- Historical + Forecast Plot (30 days) ---
+            st.subheader("📈 Historical & Forecasted AQI")
+            hist_df = df[-30:].reset_index()  
+            fig_hist = go.Figure()
+            fig_hist.add_trace(go.Scatter(x=hist_df['Date'], y=hist_df['AQI'],
+                                          mode='lines+markers', name="Historical AQI", line=dict(color="blue")))
+            fig_hist.add_trace(go.Scatter(x=forecast_df['Date'], y=forecast_df['Predicted_AQI'],
+                                          mode='lines+markers', name="Forecast AQI", line=dict(color="orange")))
+            fig_hist.update_layout(title=f"AQI Trend & Forecast for {city}",
+                                   xaxis_title="Date", yaxis_title="AQI", template="plotly_white")
+            st.plotly_chart(fig_hist, use_container_width=True)
+
+            # --- Real-Time Alerts ---
+            if live_aqi > 400:
+                st.error("☠️ Hazardous air quality right now! Stay indoors!")
+            elif live_aqi > 300:
+                st.error("🤢 Very Unhealthy air quality detected. Avoid outdoor activity!")
+            elif live_aqi > 200:
+                st.warning("😷 Unhealthy air quality. Sensitive groups at risk.")
+            elif live_aqi > 100:
+                st.info("🙂 Moderate AQI. Sensitive groups should limit exposure.")
+            else:
+                st.success("😊 Air quality is good today!")
+
+            # --- Forecast Table ---
+            st.subheader("📊 Predicted AQI for Next 15 Days with Advisories")
             st.dataframe(forecast_df[[
                 "Date", "AQI with Label", "Health Advisory",
                 "Farming Advisory", "Transport Advisory", "Research Hint"
-            ]].style.highlight_max(subset=["AQI with Label"], color='lightcoral'))
+            ]])
 
-            # Warning
-            max_aqi = forecast_df["Predicted_AQI"].max()
-            if max_aqi > 400:
-                st.error("☠️ AQI will reach hazardous levels. Stay indoors!")
-            elif max_aqi > 300:
-                st.error("🤢 Very Unhealthy air expected. Avoid outdoor activity!")
-            elif max_aqi > 200:
-                st.warning("😷 Unhealthy air expected. Limit exposure.")
-            elif max_aqi > 100:
-                st.info("🙂 AQI moderate to unhealthy for sensitive groups.")
-            else:
-                st.success("😊 AQI remains in a healthy range.")
-
-            # Plot
-            fig, ax = plt.subplots(figsize=(10, 4))
-            ax.plot(forecast_df['Date'], forecast_df['Predicted_AQI'], marker='o', color='orange', label='Forecast')
-            ax.set_title(f"AQI Forecast for {city}")
-            ax.set_xlabel("Date")
-            ax.set_ylabel("AQI")
-            ax.grid(True)
-            ax.legend()
-            plt.xticks(rotation=45)
-
-            # Annotate peak AQI
-            max_row = forecast_df.loc[forecast_df["Predicted_AQI"].idxmax()]
-            ax.annotate(
-                aqi_label(max_row["Predicted_AQI"]),
-                xy=(max_row["Date"], max_row["Predicted_AQI"]),
-                xytext=(max_row["Date"], max_row["Predicted_AQI"] + 10),
-                ha='center',
-                color='red',
-                fontsize=12,
-                arrowprops=dict(facecolor='red', shrink=0.05)
+            # --- Download Option ---
+            csv = forecast_df.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                label="📥 Download Forecast Data (CSV)",
+                data=csv,
+                file_name=f"AQI_Forecast_{city}.csv",
+                mime="text/csv"
             )
-
-            st.pyplot(fig)
