@@ -5,12 +5,12 @@ It also provides smart **health, agriculture, transport**, and **research** advi
 
 ---
 ![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
-![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%202.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/bd0164a8996893679ae99de900988dd7e77bf722/pic%203.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%204.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%205.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%206.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%207.png)
+![image alt](https://github.com/sahuruchi21/real-time-aqi-predictor/blob/62833e9e33bf6dcd2aa6fd9afb82aab880270097/pic%208.png)
 ## 🚀 Features
 - ✅ Fetches **real-time AQI** via WAQI API  
 - 📈 **15-day AQI forecast** using an LSTM model  
