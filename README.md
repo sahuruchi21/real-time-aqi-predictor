@@ -49,8 +49,7 @@ Get a free token from https://aqicn.org/data-platform/token
 Enter the token inside the app when prompted.
 
 ▶️ Run Locally
-bash
-Copy code
+
 streamlit run app.py
 📦 File Structure
 graphql
